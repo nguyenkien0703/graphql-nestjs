@@ -10,18 +10,40 @@ type User {
   phone: String
 }
 
+type UserPaginationResponse {
+  data: [User!]!
+  total: Float!
+  currentPage: Float!
+  itemPerPage: Float!
+}
+
 type Query {
-  users: [User!]!
+  users(filter: UserFilter!): UserPaginationResponse!
   user(id: Float!): User!
+}
+
+input UserFilter {
+  search: String
+  itemPerPage: Int
+  page: Int
 }
 
 type Mutation {
   createUser(userData: CreateUserDto!): User!
+  updateUser(id: Float!, userData: UpdateUserDto!): User!
+  deleteUser(id: Float!): Boolean!
 }
 
 input CreateUserDto {
   email: String!
   password: String!
+  username: String
+  phone: String
+}
+
+input UpdateUserDto {
+  email: String
+  password: String
   username: String
   phone: String
 }

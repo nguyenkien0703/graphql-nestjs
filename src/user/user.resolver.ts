@@ -1,16 +1,19 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UserService } from "./user.service";
-import { User } from "./models/user.model";
-import { CreateUserDto } from "./dto/user.dto";
+import { User, UserPaginationResponse } from "./models/user.model";
+import { CreateUserDto, UpdateUserDto, UserFilter } from "./dto/user.dto";
 // bên restful là controler, thì bên graphql là resolver
 @Resolver()
 export class UserResolver {
     constructor(private userService: UserService) {}
 
-    @Query(() => [User])
+    // @Query(() => [User])// old version
+    @Query(() => UserPaginationResponse) // new version after add search
     //get ra thì sủ dụng @Query
-    async users(): Promise<User[]> {
-        return await this.userService.findAll();
+    async users(
+        @Args("filter") filter: UserFilter,
+    ): Promise<UserPaginationResponse> {
+        return await this.userService.findAll(filter);
     }
 
     @Query(() => User)
@@ -23,5 +26,18 @@ export class UserResolver {
     @Mutation(() => User)
     async createUser(@Args("userData") userData: CreateUserDto): Promise<User> {
         return await this.userService.create(userData);
+    }
+
+    @Mutation(() => User)
+    async updateUser(
+        @Args("id") id: number,
+        @Args("userData") dataUpdate: UpdateUserDto,
+    ): Promise<User> {
+        return await this.userService.update(id, dataUpdate);
+    }
+
+    @Mutation(() => Boolean)
+    async deleteUser(@Args("id") id: number): Promise<boolean> {
+        return await this.userService.delete(id);
     }
 }

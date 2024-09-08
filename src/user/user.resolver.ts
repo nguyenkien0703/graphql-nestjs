@@ -2,7 +2,10 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UserService } from "./user.service";
 import { User, UserPaginationResponse } from "./models/user.model";
 import { CreateUserDto, UpdateUserDto, UserFilter } from "./dto/user.dto";
+import { UseGuards } from "@nestjs/common";
+import { AuthGuard } from "src/ath/auth.guard";
 // bên restful là controler, thì bên graphql là resolver
+@UseGuards(AuthGuard)
 @Resolver()
 export class UserResolver {
     constructor(private userService: UserService) {}
@@ -10,6 +13,7 @@ export class UserResolver {
     // @Query(() => [User])// old version
     @Query(() => UserPaginationResponse) // new version after add search
     //get ra thì sủ dụng @Query
+    // @UseGuards(AuthGuard)
     async users(
         @Args("filter") filter: UserFilter,
     ): Promise<UserPaginationResponse> {
@@ -18,6 +22,7 @@ export class UserResolver {
 
     @Query(() => User)
     // get detail user thì sử dụng @Query
+    // @UseGuards(AuthGuard)
     async user(@Args("id") id: number): Promise<User> {
         return await this.userService.findOne(Number(id));
     }

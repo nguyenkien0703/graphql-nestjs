@@ -17,6 +17,11 @@ type UserPaginationResponse {
   itemPerPage: Float!
 }
 
+type LoginResponse {
+  accessToken: String
+  refreshToken: String
+}
+
 type Query {
   users(filter: UserFilter!): UserPaginationResponse!
   user(id: Float!): User!
@@ -32,6 +37,8 @@ type Mutation {
   createUser(userData: CreateUserDto!): User!
   updateUser(id: Float!, userData: UpdateUserDto!): User!
   deleteUser(id: Float!): Boolean!
+  register(userData: RegisterDto!): User!
+  login(userData: LoginDto!): LoginResponse!
 }
 
 input CreateUserDto {
@@ -46,4 +53,16 @@ input UpdateUserDto {
   password: String
   username: String
   phone: String
+}
+
+input RegisterDto {
+  email: String!
+  password: String!
+  username: String
+  phone: String
+}
+
+input LoginDto {
+  email: String!
+  password: String!
 }
